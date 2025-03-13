@@ -1,0 +1,37 @@
+# 1. View current disk usage
+df -h
+
+# 2. Check backup directory size
+du -h --max-depth=1 /var/lib/psa/dumps/domains/turbowso.com
+
+# 3. List large backup files (user-data backups are usually the largest)
+ls -lh /var/lib/psa/dumps/domains/turbowso.com/backup_user-data_*.tzst
+
+# 4. Delete specific large backup files (keep the most recent one)
+# Replace YYMMDD with the date pattern in the filename
+rm /var/lib/psa/dumps/domains/turbowso.com/backup_user-data_YYMMDD*.tzst
+
+# 5. Delete all but the most recent full backup
+ls -t /var/lib/psa/dumps/domains/turbowso.com/backup_user-data_*.tzst | tail -n +2 | xargs rm
+
+# 6. Delete incremental backups older than 7 days
+find /var/lib/psa/dumps/domains/turbowso.com -name "backup_user-data_*_*.tzst" -mtime +7 -delete
+
+# 7. Delete old log backups (older than 7 days)
+find /var/lib/psa/dumps/domains/turbowso.com -name "backup_logs_*.tzst" -mtime +7 -delete
+
+# 8. Delete old statistics backups (older than 7 days)
+find /var/lib/psa/dumps/domains/turbowso.com -name "backup_statistics_*.tzst" -mtime +7 -delete
+
+# 9. Check space freed up
+df -h
+
+
+
+For other websites, just replace "turbowso.com" with the domain name:
+
+# For wsoacademy.com
+find /var/lib/psa/dumps/domains/wsoacademy.com -name "backup_user-data_*.tzst" -mtime +7 -delete
+
+# For digitalchief.shop
+find /var/lib/psa/dumps/domains/digitalchief.shop -name "backup_user-data_*.tzst" -mtime +7 -delete
